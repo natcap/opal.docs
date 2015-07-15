@@ -1,0 +1,5 @@
+syntax: glob
+source/users_guide.aux
+source/users_guide.log
+source/users_guide.pdf
+source/users_guide.synctex.gz
