@@ -1,3 +1,5 @@
+%& -job-name="OPAL User's Guide"
+
 \documentclass[11pt,letterpaper]{report}
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
@@ -246,9 +248,13 @@
 					
 					\item {\em ecosystemservicename\_{}paved\_{}static\_{}map.tif}: A raster indicating the impact on the given service for each pixel of conversion to paved ground. Negative values indicate a loss in service provision.
 					
-					\item {\em ecosystemservicename\_{}protect\_{}static\_{}map.tif} or {\em ecosystemservicename\_{}restore\_{}static\_{}map.tif}: A raster indicating the impact on the given service for each pixel of avoided loss of natural vegetation (protection) or restoration of natural vegetation. Positive values indicate a gain in service provision. The static map provided should match the offset type specified above. 
+					\item {\em ecosystemservicename\_{}protect\_{}static\_{}map.tif} or
 					
-					\item For hydrological services (sediment, nutrient and custom, if ``hydrological'' option is chosen), three additional maps must be provided. These maps should be named {\em ecosystemservicename\_{}bare\_{}pts.tif}, {\em ecosystemservicename\_{}paved\_{}pts.tif} and {\em ecosystemservicename\_{}protect\_{}pts.tif} or {\em ecosystemservicename\_{}restore\_{}pts.tif}. These maps are used to adjust the static map estimates based on how connected the impact or offset site is to the stream network (pts stands for ``percent to stream,'' an output provided by the InVEST sediment and nutrient models). This requirement may be eliminated in future versions of OPAL, following improvement to the InVEST sediment and nutrient models.
+					 {\em ecosystemservicename\_{}restore\_{}static\_{}map.tif}: A raster indicating the impact on the given service for each pixel of avoided loss of natural vegetation (protection) or restoration of natural vegetation. Positive values indicate a gain in service provision. The static map provided should match the offset type specified above. 
+					
+					\item For hydrological services (sediment, nutrient and custom, if ``hydrological'' option is chosen), three additional maps must be provided. These maps should be named {\em ecosystemservicename\_{}bare\_{}pts.tif}, {\em ecosystemservicename\_{}paved\_{}pts.tif} and {\em ecosystemservicename\_{}protect\_{}pts.tif} or 
+					
+					{\em ecosystemservicename\_{}restore\_{}pts.tif}. These maps are used to adjust the static map estimates based on how connected the impact or offset site is to the stream network (pts stands for ``percent to stream,'' an output provided by the InVEST sediment and nutrient models). This requirement may be eliminated in future versions of OPAL, following improvement to the InVEST sediment and nutrient models.
 					
 				\end{enumerate}
 				
