@@ -12,22 +12,14 @@ help:
 all:
 	$(MAKE) en es
 
-lang_pdf:  # 3 arguments, $(INFILE), $(OUTFILE) $(VERSION)
+lang_pdf:
 	# Arguments: in_suffix, out_suffix
-	cd source && $(shell python $(INFILE) $(VERSION))
-	# cd source && $(shell find . -name "*.tex" | xargs sed -i '' 's/\+VERSION\+/$(VERSION)/g') 
-	cd source && $(PDFLATEX) --jobname=$(OUTFILE) $(INFILE).tex
-		 
+	python replace.py source/title_page_$(SUFFIX).tex $(VERSION);\
+	cd source && $(PDFLATEX) --jobname=$(OUTFILE) users_guide_$(SUFFIX).tex;\
 
 en:
-	# INFILE=users_guide.tex
-	# OUTFILE=../OPAL_manual_en.pdf
-	# $(MAKE) INFILE=users_guide OUTFILE=OPAL_manual_en VERSION=$(VERSION) lang_pdf
 	$(MAKE) lang_pdf SUFFIX=en
 
 es:
-	# INFILE=users_guide_sp.tex
-	# OUTFILE=../OPAL_manual_es.pdf
-	# $(MAKE) INFILE=users_guide_sp OUTFILE=OPAL_manual_es VERSION=$(VERSION) lang_pdf
 	$(MAKE) lang_pdf SUFFIX=en
 
