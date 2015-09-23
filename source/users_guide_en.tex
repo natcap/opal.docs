@@ -1,0 +1,410 @@
+% %& -job-name="OPAL User's Guide"
+
+\documentclass[11pt,letterpaper]{report}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[margin=1in]{geometry} %change document margins
+\usepackage{enumitem} %get lettered lists
+\usepackage[T1]{fontenc}
+\usepackage{titlesec, blindtext, color} %for fancy chapter numbering
+\usepackage{changepage}%for indenting whole paragraphs
+\titleclass{\chapter}{straight} %no page break between chapters
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\huge\bfseries}
+\titlespacing{\chapter} {0pt}{40pt}{20pt}
+\titlespacing{\subsection} {0.25in} {10pt}{5pt}
+\setlength{\parskip}{10pt} %set spacing between paragraphs
+
+\newenvironment{myenumerate}{%to have indents in sub paragraphs in list, use numbers for sublevels
+	\edef\backupindent{\the\parindent}
+	\enumerate
+	\setlength{\parindent}{\backupindent}
+		\setlist[enumerate,1]{label=(\arabic*)}
+		\setlist[enumerate,2]{label=(\arabic*)}
+}{\endenumerate}
+
+
+\graphicspath{ {images/} }
+
+\title{OPAL: Offset Portfolio Analyzer and Locator}
+\author{Lisa Mandle}
+
+\begin{document}
+
+\input{title_page}
+
+\newpage
+	\pagenumbering{roman}
+	\tableofcontents
+
+\newpage
+	\pagenumbering{arabic}
+\chapter{Overview}
+
+	OPAL (Offset Portfolio Analyzer and Locator) is a free, open-source, stand-alone software tool that will run on recent Windows operating systems (Windows Vista and later). OPAL enables users to estimate the impacts of development activities, such as mines or roads, on terrestrial ecosystems and several of the services they provide, and then to select offsets to efficiently mitigate losses. OPAL tracks how people are affected by the environmental impacts of development and mitigation activities, making the consequences of development more transparent and enabling mitigation portfolios to be designed in a way that maintains or restores environmental benefits in a socially equitable manner.
+	
+	OPAL is designed to be used in diverse contexts around the world. It is a generalized and flexible version of MAFE-T, which was developed to support offset portfolio selection in Colombia based on its national offset policy and manual. This User's Guide provides information on assembling required data, creating inputs, running OPAL and interpreting tool results. Additional questions about the tool should be posted on the Natural Capital Project User Forum (\url{http://forums.naturalcapitalproject.org}), where NatCap scientists and tool developers can provide an answer.
+
+\chapter{OPAL workflow}
+
+	To use OPAL in a new location, the user will first need to create the ecosystem service change maps that are used for estimating project impacts and the offset value of different mitigation options. OPAL comes with helper tools for generating these maps based on the InVEST carbon, nutrient and/or sediment models, or with outputs from other ecosystem service models.  Creating these maps involves the following steps (see \hyperref[ch:maps]{``Generating maps of ecosystem service change'' section} for details):
+	
+	\begin{center}
+		{\sffamily Assemble input data $\Rightarrow$ Create ecosystem service change maps $\Rightarrow$ Evaluate static map quality}
+	\end{center}
+	
+	After ecosystem service change maps have been created for the desired services for a particular region, they can be used for repeated runs of OPAL within that area, to evaluate multiple projects without needing to create new maps each time. Once the desired maps have been created, running OPAL involves only the following steps (see the \hyperref[ch:runningOPAL]{``Running OPAL section''} for details):
+	
+	\begin{center}
+		{\sffamily Compile input data and static maps $\Rightarrow$ Run OPAL $\Rightarrow$ Select offset portfolio and explore net balance}
+	\end{center}
+
+
+\chapter{Downloading and installing OPAL}
+
+	\begin{enumerate} 
+		\item Download OPAL from the Natural Capital Project website (\url{http://www.naturalcapitalproject.org/opal_download.html}). 
+		
+		\item Double click downloaded file to install OPAL. Note that OPAL requires \~{}160 MB of disk space.
+		
+		\item Select installer language, and click ``Next'' to advance.
+		
+		\item Click ``I Agree'' to accept the license agreement.
+		
+		\item Click ``Install'' to start the installation.
+	 \end{enumerate}
+
+\chapter{Generating maps of ecosystem service change}
+\label{ch:maps}
+
+	In order to rapidly evaluate the impacts of development activities and the benefits of different mitigation options, OPAL relies on a set of pre-calculated static maps rather than directly running InVEST models every time the tool is used. These static maps are based on the InVEST sediment, nutrient and carbon models, or on other ecosystem service models of the user's choosing. Once static maps have been created for a particular area, OPAL can be run repeatedly to assess impacts and choose offset sites without the need to regenerate static maps every time.
+	
+	To generate static maps using the InVEST sediment, nutrient and carbon models, each InVEST model is run for the area of analysis under current landscape conditions and under three simulated land use/land cover scenarios. These scenarios include complete conversion to bare ground and conversion to paved ground (or whatever land use code is provided in those fields). These two scenarios are automatically generated by the static map generator tool. 
+	
+	The third scenario depends on the desired offset method (protection or restoration) and an associated land use/land cover map must be provided by the user. To estimate the value of protection, to the user should provide a simulated landscape representing the total loss of natural vegetation. To estimate the value of restoration, to the user should provide a simulated landscape representing total restoration of natural vegetation. In both cases, the simulated landscape will be compared with current landscape conditions.
+	
+	Outputs from the InVEST models are used to produce a set of maps indicating the impacts to each ecosystem service of converting areas to paved or bare ground, and of protecting areas to avoid loss of natural vegetation or restoring of natural vegetation (depending on the offset method selected). By overlaying the footprint of an area being considered for development or as an offset onto these maps, a good estimate of the change in service can be calculated quickly, avoiding the need for a repeated and potentially lengthy series of InVEST model runs. 
+	
+	In addition to creating static maps based on the InVEST sediment, nutrient and carbon models, the user has the option to generate their own set of static maps for another service or using other models and to include this service in OPAL analyses.
+	
+	Again, once static maps have been generated for a particular area, they can be used for repeated runs of OPAL and do not need to be regenerated every time.
+
+	\subsection*{Ecosystem service models and data needs:}
+
+	OPAL includes three  map generator tools that create the ecosystem service change maps based on the InVEST nutrient, sediment and carbon models. Running these tools requires the same inputs as the InVEST models. See the InVEST User's Guide for detailed information on data requirements and format: \url{http://www.naturalcapitalproject.org/download.html}. 
+	
+	\subsection*{Generating static maps for estimating impacts and offset values for carbon, sediment and nutrient services:}
+	
+	The ecosystem service change map generator tools are downloaded along with OPAL and can be run from the Start Menu by searching for ``static map generator.''
+	 
+	The sediment, nutrient and carbon static map generators implement three steps:
+	
+	First, the tools run the InVEST sediment, nutrient or carbon model across the current landscape and three simulated scenarios. As described above, the tool will automatically generate the bare and paved scenarios (or other preferred impact type) using the matching LULC code provided by the user. For the total loss of natural vegetation scenario required to create a static map for protection, the user must provide the LULC raster map representing the LULC types expected if all natural vegetation was removed. This loss of natural vegetation scenario can include multiple LULC types, representing, for example, conversion of plantations, pasture, croplands or urban development in different locations. For the restoration of natural vegetation scenario required to create a static map for restoration, the user must provide the LULC raster map representing the LULC types expected if vegetation was to be restored to a natural ecosystem type. All LULC types specified in the simulated scenarios must also appear with associated parameters in the biophysical table. 
+	
+	Second, relevant InVEST model outputs are used to create sets of static maps for estimating the impacts of development (either conversion to bare ground or to paved ground) and for estimating the benefits of offsets (either through avoided loss of natural vegetation by protection or through restoration). The technical details and equations used in the InVEST models to generate these outputs can be found in the InVEST User's Guide: \url{http://www.naturalcapitalproject.org/download.html}. Briefly, for carbon sequestration, the static map generator calculates the difference in pixel-level carbon storage. For sediment and nutrient retention, the static map generators calculate pixel-level differences in sediment or nutrient export and adjust by the amount of the export likely to actually reach the stream based on the sediment or nutrient delivery ratio. 
+	
+	Thirdly and finally, the static map generator tools optionally run simulations to compare the static map-based estimates of changes in service provision against estimates obtained directly from the InVEST model. For each run of the simulation, the tool generates a random impact site polygon. The random impact site is used to generate a LULC scenario for InVEST in which just the impact site is converted to either bare or paved ground, or to the alternate LULC type in the provided simulated scenario. The tool then runs InVEST for the current and random impact site scenarios and calculates the change in service provision, as well as the static map-based estimate based on the static maps generated in the second step. The results of these simulations are provided as an output, allowing the user to evaluate the quality of the static map estimates as compared to expected changes in service provision modeled directly with InVEST. Note that the more simulations requested per watershed, the greater the computational time and disk space required to complete the simulations. 
+		
+	If data for calibration is available for the areas of interest, the models can be calibrated in InVEST and then the calibrated parameters can be used in the tools to generate new static maps. If more precise estimates are needed than the static maps provide, OPAL can also serve as a first-pass screening of the most promising offset parcels. The offset portfolio can be re-run in InVEST or with other ecosystem service models to provide an improved estimate of the changes expected with varying offset portfolios. 
+	
+	\subsection*{Generating ecosystem service change maps for custom ecosystem services:}
+	
+	While custom static maps can be created independently and input directly into the main OPAL tool, a custom ecosystem service static map generator tool is also included. Both approaches can be used to create static maps for services beyond carbon, sediment or nitrogen, or to use models other than InVEST to estimate impacts to carbon, sediment or nitrogen services.  In either case, negative static maps values should indicate a loss of service and positive values should indicate service gain.
+	
+	The static map generator tool requires as inputs maps of pixel-level service provision under the same four scenarios as used to generate the standard carbon, sediment and nitrogen static maps: current LULC conditions (base), complete conversion of the landscape to bare ground, complete conversion of the landscape to paved ground, and total loss of natural vegetation. The tool then calculates the difference between the current (base) level of service provision and the other three scenarios to generate the three static maps needed for estimating development impacts and offset benefits in OPAL. The static map outs are saved to a folder in the user-specified workspace, when can then be provided as a custom ecosystem service input to OPAL.
+	
+	\subsection*{A note about additionality:}
+	
+	The static map values for protection and restoration produced by the static map generator are based on the assumption that protection and restoration activities provide additional benefits that would not exist in the absence of mitigation and are totally effective in achieving those benefits. In the case of protection, this assumes that mitigation areas would otherwise be completely converted to non-natural vegetation. In reality, this probability of conversion may be less than 100 percent. In the case of restoration, this assumes that restoration completely restores vegetation to its natural state. In practice, there are likely to be time lags and even some probability of restoration failure. To truly offset ecosystem service losses, the amount of mitigation required should account for these factors. 
+	
+	One way of handling this is to assign a mitigation ratio (the number of units of offset required for a one unit loss of service) that is greater than 1. In OPAL, mitigation ratios can be specified for both biodiversity (in terms of number of hectares) and for each ecosystem service in the main OPAL interface and associated inputs. If there is likely to be spatial variation in the additionality of mitigation activities for ecosystem service benefits, this can be accounted for in the spatial maps by adjusting the pixel-level static map values. For example, in the case of protection, some areas may be at greater risk of deforestation because they are close to roads or are well-suited to agriculture. The additionality, or added benefit, of protecting these high risk areas is greater than the benefits of protecting low risk areas. This can be reflected by multiplying the static map for protection by the probability of deforestation.
+	
+
+\chapter{Running OPAL}
+\label{ch:runningOPAL}
+
+	\begin{myenumerate}
+		\item Launch OPAL from the start menu.
+		
+		\item Select the \textbf{workspace (required)} where output files will be saved.
+		
+		\item Input \textbf{project footprint (required)}.\
+
+			The project footprint must be a polygon shapefile of the area of development with an integer field named ``FID'' If the shapefile contains multiple features, the analysis will consider the impacts of all polygons.
+				
+		\item Select \textbf{impact type (required)}.\
+		
+			Default options are either ``Road/Paved'' for development that results in paved surfaces or ``Mine/Bare'' for development that results in exposed ground.
+			
+			In practice, these two categories can be used to represent other land use/land cover types of interest (e.g., conversion to crops or pasture) if the static maps are created using another LULC code  in place of paved or bare (see \hyperref[ch:maps]{``Generating maps of ecosystem service change'' section} for more information). However, only a single impact type can be specified at a time, so it is not possible to estimate impacts that result in conversion to multiple land use/land cover types in a single run of OPAL.
+		
+		\item Input \textbf{natural ecosystems map (required)}.
+		
+			A polygon shapefile of natural ecosystems. The amount and type of biodiversity offset needed is calculated based on the overlap between natural ecosystems and the project footprint. 
+		
+			\begin{adjustwidth}{0.25in}{}
+				
+				{\em Format}: Each row should be a polygon or multi-polygon of a particular ecosystem type. Each column contains information about the ecosystem, and two columns must be named as follows:
+			
+			\end{adjustwidth}
+				
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item {\em ecosystem}: string value with the name of the ecosystem type\
+				
+				\item {\em mit\_{}ratio}: the numeric compensation factor/mitigation ratio for that ecosystem
+			
+			\end{enumerate}
+			
+		
+		\item Select \textbf{offset type (required)}.
+		
+			Options are either ``protection'' or ``restoration.'' If protection is selected, the mitigation value of offset parcels will be calculated as the avoided loss of vegetation. If restoration is selected, the mitigation value will be calculated as the benefit of restoring vegetation. The appropriate set of potential offset sites and static maps must then be provided to match the desired offset type.
+			
+		\item Input \textbf{potential offset sites (required)}.
+		
+			A polygon shapefile of potential offset sites for OPAL to select from. If protection is chosen as the offset type to be used, this should be a map of remaining natural ecosystems and can be the same file as the natural ecosystems map input above. If restoration is chosen as the offset type to be used, this should be a map of areas not currently included in the natural ecosystems map that have the potential to be restored to natural ecosystems (e.g., forest, wetland). 
+			
+			\begin{adjustwidth}{0.25in}{}	
+				{\em Format}: Each row should be a polygon or multi-polygon of a particular ecosystem type. One column is required, and additional columns will be ignored. The required column must be named as follows:
+			\end{adjustwidth}
+			
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item	{\em ecosystem}: string value with the name of the current ecosystem type if the chosen offset type is protection, or of the ecosystem type to be restored if the chosen offset type is restoration. In order to match losses and offsets to the same ecosystem type for biodiversity, the potential offsets sites map must use the same set of ecosystem names as the natural ecosystems map.
+			\end{enumerate}
+						
+			
+		
+		\item Input \textbf{servicesheds (required)}.
+		
+			A polygon shapefile of the servicesheds for hydrological services, which are the watersheds upstream of drinking water intake points. Impacts for hydrological services will be summed by serviceshed.
+
+			\begin{adjustwidth}{0.25in}{}					
+				{\em Format}: Each row should be a polygon or multi-polygon of the serviceshed for a particular population center. Each column contains information about the serviceshed, and two columns must be named as follows:
+			\end{adjustwidth}
+				
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item {\em	pop\_{}center}: string value with the name of the population center or beneficiary group linked to the serviceshed
+				
+				\item {\em pop\_{}size}: the number of people within the population center or beneficiary group	
+			\end{enumerate}
+		
+		\item Input \textbf{search zones (hard boundary, required)} and \textbf{subzones (soft boundary 1, optional)}.
+		
+			A polygon shapefile of search zones, potentially with nested priority subzones. Search zones serve as hard boundaries, so potential offset patches returned by OPAL are restricted only to those that occur in the same zone as the project footprint. Subzones serve as soft boundaries, so the results report indicates which offset patches are located within the same subzone as the project footprint so that they can be prioritized if desired. 
+
+			\begin{adjustwidth}{0.25in}{}				
+				{\em Format}: Each row should be a priority subzone with an associated zone. If subzones are not desired, only a single polygon per zone should be provided. To search the entire study area for offset sites, without restricting by zones, this shapefile should contain a single polygon covering the full extent of the data. The column contains the name of the zone to which each priority search area belongs, and must be formatted as follows:
+			\end{adjustwidth}
+			
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item	{\em zone}: string value with the name of the zone to which the priority subzone belongs. 
+			\end{enumerate}	
+				
+		\item Input \textbf{soft boundaries 2 and 3 (both optional)}.
+		
+			These are polygon shapefiles allowing additional level of prioritization of offset parcels, if desired. OPAL tracks which potential offset parcels are located within the same soft boundary  polygons as the project footprint so that they can be prioritized for selection in the offset portfolio, if desired. For example, one set of soft boundaries might represent watersheds and the other represent administrative divisions in order to prioritize offsets within the same watershed and administrative unit where possible.
+		
+		\item Input \textbf{threat map (optional)}.
+		
+			A raster file whose values should indicate the level of threat from anthropogenic influences at a particular point. Threat is considered an indicator of patch quality for biodiversity. If included, offset patches will be restricted to those with average threat values less than or equal to that of ecosystem patches intersecting the impact site (project footprint). This ensures that offset patches are of equal or greater quality to the impacted patches. 
+		
+		\item  Input \textbf{species richness map (optional)}.
+		
+			A raster file whose values indicate the level of species richness at a particular site. Species richness is considered an indicator of patch quality for biodiversity. If included, offset patches will be restricted to those with average species richness values greater than or equal to that of ecosystem patches intersecting the impact site (project footprint). This ensures that offset patches are contain an equal or greater amount of species richness relative to the impacted patches
+				
+		\item Input \textbf{avoidance areas (optional)}.
+		
+			A polygon shapefile indicating designated areas where development impacts should be avoided. For example, this might include protected areas, RAMSAR wetland sites or other areas where development impacts are discouraged or prevented by law. If the project footprint intersects with an avoidance area, the tool will issue a warning. 
+				
+		\item Input \textbf{conservation portfolio (optional)}.
+		
+			A polygon shapefile indicating priority areas for locating offsets. This map could be based on landscape-level conservation planning exercises, policy or other source of prioritization. If included, the results will indicate which potential offset patches fall within the conservation portfolio so that they can be preferentially selected for the offset portfolio.
+		
+		\item Input \textbf{previously granted impacts (optional)}.
+	
+			A polygon shapefile of project footprints of impact sites that have been granted but are not yet represented as developed land in the land use/land cover map. If included, portions of potential offset parcels that intersect previously granted impacts will be removed so that they cannot be chosen and counted towards offsets.
+				
+		\item Input \textbf{previously selected offsets (optional)}.
+		
+			A polygon shapefile of areas that cannot be selected as offsets because they have already designated as offsets for other projects. Potential offset parcels within this shapefile will be excluded from potential offset sites in the results. Other sites that are not at risk of degradation and so whose protection would not provide additional benefits beyond baseline conditions (e.g., protected areas), or areas that are otherwise not feasible as offsets for political, social, economic or other reasons can also be included here
+		
+		\item Choose \textbf{ecosystem services} to include in calculating impacts and selecting offsets.
+		
+			Check the boxes for the desired ecosystem services (carbon, nutrient, sediment and/or custom) to be included. For each service that is selected, the following must be provided:
+			
+			\begin{enumerate}[label=\alph*.]
+				
+				\item Input a \textbf{mitigation ratio}: The mitigation ratio is numeric value indicating the number of units of offsets required to compensate for one unit of ecosystem service loss. The mitigation ratio can be used to account for the additionality of offsets (see the last section of \hyperref[ch:maps]{``Generating maps of ecosystem service change''} for more info) and also to adjust for any biases in static maps impact and offset estimates. For example, if simulations from the static map generator indicate that static map estimates of restoration benefits as compared to impacts are lower than InVEST estimates, it may be desirable to specify a mitigation ration greater than 1.
+				
+				\item Select a folder containing \textbf{ecosystem service change maps} for the desired service. Static maps are sets of raster maps used by the tool to estimate the impacts of development or benefits of protection. These maps can be created using OPAL static map generators (see \hyperref[ch:maps]{``Generating maps of ecosystem service change''} for information on creating these maps). For custom ecosystem services, the type of custom service field must also be chosen. This indicates what kind of serviceshed should be applied when tracking impacts: either the total change in service (``global'' option, as applies to carbon storage) or the change in service per upstream watershed (``hydrological'' option, as applies to sediment and nutrient retention for drinking water quality).\\
+				
+				\begin{adjustwidth}{0.25in}{}
+					{\em Format}: For each selected service, a folder containing the following rasters:
+				\end{adjustwidth}
+				
+				\begin{enumerate}[label=(\arabic*),leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+					\item {\em ecosystemservicename\_{}bare\_{}static\_{}map.tif} (e.g., {\em sediment\_{}bare\_{}static\_{}map} or {\em custom\_{}bare\_{}static\_{}map}): A raster indicating the impact on the given service for each pixel of conversion to bare ground. Negative values indicate a loss in service provision.
+					
+					\item {\em ecosystemservicename\_{}paved\_{}static\_{}map.tif}: A raster indicating the impact on the given service for each pixel of conversion to paved ground. Negative values indicate a loss in service provision.
+					
+					\item {\em ecosystemservicename\_{}protect\_{}static\_{}map.tif} or
+					
+					 {\em ecosystemservicename\_{}restore\_{}static\_{}map.tif}: A raster indicating the impact on the given service for each pixel of avoided loss of natural vegetation (protection) or restoration of natural vegetation. Positive values indicate a gain in service provision. The static map provided should match the offset type specified above. 
+					
+					\item For hydrological services (sediment, nutrient and custom, if ``hydrological'' option is chosen), three additional maps must be provided. These maps should be named {\em ecosystemservicename\_{}bare\_{}pts.tif}, {\em ecosystemservicename\_{}paved\_{}pts.tif} and {\em ecosystemservicename\_{}protect\_{}pts.tif} or 
+					
+					{\em ecosystemservicename\_{}restore\_{}pts.tif}. These maps are used to adjust the static map estimates based on how connected the impact or offset site is to the stream network (pts stands for ``percent to stream,'' an output provided by the InVEST sediment and nutrient models). This requirement may be eliminated in future versions of OPAL, following improvement to the InVEST sediment and nutrient models.
+					
+				\end{enumerate}
+				
+			\end{enumerate}	
+		
+		\item Choose the \textbf{offset scheme}.
+		
+			Offset scheme options include: ES and biodiversity, ES priority or biodiversity priority. If ``ES and biodiversity'' is chosen, OPAL will return potential offset parcels that contribute to meeting any ecosystem service or biodiversity target. If ``ES priority'' is chosen, OPAL will return only potential offset parcels that meet ecosystem service targets, and biodiversity offsets will be chosen from within that set. If ``biodiversity priority'' is chosen, OPAL will return only potential offset parcels that meet biodiversity targets (i.e., are of the same vegetation type as impacted vegetation, and meet minimum threat and species richness criteria, if included), and ecosystem service offsets must be selected from within that set.
+		
+		\item Choose whether to \textbf{restrict offset parcels by LCI}.
+		
+			LCI (Landscape Context Index) is an indicator of habitat quality. (See \hyperref[ch:glossary]{``Glossary/key terms'' section} for its definition). If the user choses to restrict offset parcels by LCI, OPAL will only return potential offset sites that have an LCI score greater than or equal to the LCI score of impacts vegetation patches. Note that calculation of LCI scores can be time consuming, so this may add substantially to OPAL run times.
+		
+		\item Choose the \textbf{proportion of offset needs to suggest}.
+		
+			OPAL provides a suggested list of offset parcels likely to meet mitigation needs. This can provide a useful starting place for selecting an offset portfolio. This number determines what proportion of offset needs are included in the suggested list. Numbers greater than 1 will lead to the suggestion of an offset portfolio exceeding mitigation needs (where possible), from which undesireable offset parcels can be removed. Numbers between 0 and 1 will lead to the suggestion of an offset portfolio that does not fully meet mitigation needs, to which additional parcels can be added.
+			
+		\item Click \textbf{``Run''}.		
+		
+	\end{myenumerate}
+
+\chapter{Interpreting results and selecting an offset portfolio}
+
+	After successfully running OPAL, the results can be found in the selected workspace in a folder named after the search zone containing the impact site (results\_{}zonename). For impact sites that span multiple search zones, a separate folder will appear for each zone.  
+	
+	Located within each results folder is an interactive report (zonename\_{}report.html) for exploring the results. The report is organized into three sections: 1. The estimated impacts to ecosystems and ecosystem services from the project; 2. An interactive table of the potential offset patches and their mitigation value, from which an offset portfolio can be selected; and 3. The estimated net benefits to ecosystems and ecosystem services based on the combined project impacts and selected offsets. Note that unless static maps have been calibrated and validated, the ecosystem service impact and offset values should be treated as unitless indices.
+	
+	The report contains the following information for analyzing impacts, evaluating potential offset patches and selecting an offset portfolio:
+	
+	\begin{myenumerate}		
+	
+		{\bfseries \item Summary of impacts to ecosystems and ecosystem services}
+		
+		\begin{enumerate}[label=\alph*.]
+			\item Impact type
+				
+				Indicates the impact type that was selected for analysis, either ``Paved/Road'' or ``Bare ground/Mine''
+				
+			\item Total impacts to ecosystem services
+			
+				Estimate of the biophysical impact of the project on carbon storage, sediment retention, nitrogen retention and, if data is provided, any additional ecosystem service. Note that a negative value indicates a loss of service provision, and therefore a negative impact. These estimates are based on the ecosystem service change maps for impact. (See \hyperref[ch:maps]{``Generating maps of ecosystem service change'' section} of this User's Guide for details) To see where people are affected by these changes, scroll down to the ``Ecosystem service benefits'' table in the third section of the interactive results report (``Net benefits to ecosystems and ecosystem services''), where impacts are listed by serviceshed.
+				
+			\item Total impacts to terrestrial ecosystems: 
+				
+				Estimate of the impacts of the project on ecosystems, summarized by ecosystem type.
+				
+			\item Details of impacts to terrestrial ecosystems: 
+			
+				Information on each ecosystem patch affected by the project, including ecosystem type, the area affected, patch quality (Landscape Context Index, if selected, and richness and threat level, if optional inputs are included), the specified mitigation ratio and total required offset area (impacted area x mitigation ratio).
+				
+		\end{enumerate}
+		
+		
+		{\bfseries \item  Offset patches and mitigation potential}
+			
+			OPAL provides a set of ecosystem patches from the polygons provided in the potential offsets site shapefile that can potentially meet offset needs based on user-specified inputs and constraints. OPAL returns those offset patches that are located within the same specified search zone as the project footprint. It also returns only those patches that meet the minimum patch size, Landscape Context Index (if selected), and threat and species richness levels (if optional input data is provided), based on the impacted patches. Note that in cases when multiple patches of the same ecosystem type are impacted, some possible offset patches may be valid as offsets for only part, and not all, of the impacts to a given ecosystem type (see \hyperref[ch:limits]{``Tool limitations''} for more details).
+			
+			The set of potential offset patches is presented in an interactive table, with key attributes (amount of offset provided, size of patch, distance from impact site, etc.) associated with each patch.
+	
+			OPAL provides a list of suggested parcels that can be a useful starting point for exploring offset portfolios. These parcels are listed above the interactive results table and also indicated in a sortable column within the table to assist the user in adding any or all of the suggested parcels to the offset portfolio. The suggested parcels are selected based on a greedy  algorithm that varies with the chosen offset scheme (``ES priority,'' ``Biodiversity priority,'' or ``ES and biodiversity''). If ``ES and biodiversity'' has been chosen, the suggested offset parcel list will include a set of parcels selected to offset both ecosystem service and biodiversity losses, considering biodiversity first, then any selected ecosystem services. If ``ES priority'' was chosen, the algorithm will suggest parcels that can be used to offset ecosystem service losses for all selected services in all servicesheds, or as close as possible given available offset parcels. In this case, the potential biodiversity value is not considered. If ``Biodiversity priority'' is selected, the algorithm with suggest parcels to offset biodiversity losses, but without consideration of ecosystem service offsets. If the suggested offset portfolios are not sufficient to offset both biodiversity and ecosystem serivce losses, additional offsite parcels can be added to the portfolio.
+			
+			Note that the greedy algorithm will select the largest parcels (in the case of biodiversity) or parcels with the greatest ecosystem service provision (in the case of ecosystem services) first, even if these parcels exceed the amount of offset needed. The algorithm also does not at present account for other factors such as distance from the project impact site. The selection algorithm may be refined in future versions of OPAL.
+			
+			Patches can be added to or removed from offset portfolio clicking the checkbox in the second column. Clicking on a column heading sorts the table by that column's attribute. This can be used to identify potential offset patches that may be especially preferable. Note that positive ecosystem service values indicate the potential offset parcel increases service provision and provides. To see the total contribution that the selected set of parcels makes to offsetting ecosystem and ecosystem service impacts, scroll down to the third section of the report (``Net benefits to ecosystems and ecosystem services'').
+			
+			Currently, if more sophisticated sorting or optimization is desired, the file offset\_{}parcels.csv located in the results folder can be opened in excel or used in conjunction with another program, such as MARXAN. A vector file of all potential offsets parcels (selected\_{}offsets.shp) can be accessed by clicking the link at the top of the table and is also found in the results folder.
+		
+		{\bfseries \item  Net benefits to ecosystems and ecosystem services}
+		
+			The tables in this section show the net effects of the project and selected offsets. The totals shown will change as offset patches are selected or deselected to reflect the net effects of a given offset portfolio. The color of the cells in the net benefits/net service column change color to indicate either a net loss (red) or net gain (green) of services as different combinations of offset patches are selected. An offset portfolio that mitigates impacts to ecosystems and to the ecosystem services accounted for in this tool will display only green cells in the results. 
+			
+			\begin{enumerate}[label=\alph*]
+				\item Benefits to terrestrial ecosystems:
+				
+					This table shows the amount of offsets selected for each ecosystem type and whether the net benefits are adequate to meet the required offset area based on the area impacted and the specified compensation factor/mitigation ratio.
+					
+				\item Ecosystem service benefits
+				
+					The first table sums the net effects of the project impact and selected offsets by serviceshed for water-related services (sediment, nitrogen, and, if included, a hydrological-type custom service). Population centers that are not affected by either the impact or the offset portfolio are not shown. The net benefits columns for sediment and nitrogen indicate whether ecosystem service losses have been mitigated for each population center. The column totals at the bottom of the table for the final columns (``net sediment * population'' and ``net nitrogen * population'') indicate whether, across the whole population, more people receive ecosystem service benefits from offsets than were lost from development. When these totals are positive (green) but some totals for net benefits per serviceshed remain negative (red), this indicates that mitigation has transferred ecosystem services away from some populations and towards others, creating winners and losers.
+					
+					The second table sums the net impacts to carbon. In this case, because the carbon serviceshed is global, only the total change in carbon storage is reported. If a global-type custom ecosystem service was included, it will appear here as well.
+			\end{enumerate}
+	\end{myenumerate}
+
+	In addition to the interactive report, each results folder contains the following files:
+	
+	\begin{adjustwidth}{0.25in}{}
+			
+	\begin{itemize}
+		\item \textbf{impacted\_{}municipalities.shp} Shapefile of the municipalities that intersect with the project footprint.
+		
+		\item \textbf{impacted\_{}parcels.csv} Table of information on patches of natural vegetation impacted by the project.
+		
+		\item \textbf{impacted\_{}subzones.shp} Shapefile of priority search area subzones that intersect with the project footprint
+		
+		\item \textbf{impacted\_{}zone.shp} Shapefile of the impacted search zone.
+		
+		\item \textbf{offset\_{}sites.shp} Shapefile of all parcels of natural vegetation in the search zone, excluding the parts of parcels to be impacted.
+		
+		\item \textbf{offset\_{}parcels.csv} Table of information on the potential offset sites included in selected\_{}offsets.shp
+		
+		\item \textbf{offset\_{}benefits\_{}to\_{}servicesheds.csv} Table of detailed benefits to servicesheds from selected\_{}offsets.shp
+		
+		\item \textbf{parcels\_{}in\_{}zone.shp} Shapefile of all parcels of natural vegetation from which potential offset sites were selected.
+		
+		\item \textbf{selected\_{}offsets.shp}  Shapefile of potential offset sites from parcels\_{}in\_{}zone.shp that meet biodiversity requirements.
+		
+		\item \textbf{servicesheds.shp} Shapefile of all servicesheds that intersect the search zone.
+		
+		\item \textbf{servicesheds\_{}with\_{}offset\_{}parcels.shp} Shapefile of all servicesheds that intersect the selected offset parcels.
+	\end{itemize}
+	\end{adjustwidth}
+
+\chapter{Glossary/key terms}
+\label{ch:glossary}
+
+	\begin{description}[leftmargin=!,labelindent=!,itemindent=-0.15in]
+		
+		\item[Landscape Context Index (LCI):] The Landscape Context Index represents the level of connectivity of a natural ecosystem patch to other patches. It is calculated as the fraction of natural ecosystem within a 500 m buffer strip around a particular patch. Note that LCI is therefore sensitive to how vegetation is divided into polygons with the natural ecosystems map and potential offset sites inputs.
+		
+		\item[Serviceshed:] In general, a serviceshed is the area providing a specific ecosystem service to particular beneficiary. By tracking the impacts of planned development and offset activities within servicesheds, OPAL is able to trace the consequences of changes in the environment to the changes in benefits people receive. Servicesheds can operate over vastly different scales, depending on the nature of the service. Carbon sequestration and its contribution to climate regulation benefits all humans on the planet, and so its serviceshed is global. In contrast, the serviceshed for drinking water purification, including the sediment and nitrogen retention services included in OPAL, is the watershed upstream from a particular population center's water intake point. For more information on the serviceshed approach, see \url{http://www.naturalcapitalproject.org/decisions/servicesheds.html}.
+		
+		\item[Static map:] In OPAL, ``static maps'' are the underlying maps used to estimate the impacts of development and the benefits of offsets on ecosystem services. These maps allow OPAL to rapidly estimate changes in ecosystem service provision without having to re-run ecosystem service models for each impact footprint or offset parcel being considered.
+	\end{description}	
+
+\chapter{Tool limitations}
+\label{ch:limits}
+
+	OPAL is intended to facilitate the selection of offset portfolios that mitigate impacts to ecosystems and ecosystem services. However, it may not be able to address all mitigation-related questions that arise and may not be applicable in all situations. When deciding whether to use OPAL, it is important to be aware of the tool's limitations, including:
+	
+	\begin{itemize}
+		\item OPAL only accounts for impacts due to changes in land use/land cover within the project footprint and does not account for any indirect impacts, such as  land use change around a road spurred by road development). More sophisticated analyses are needed to estimate indirect effects. This can be done by linking land use change modeling with other tools for estimating change in ecosystem services, such as InVEST.
+		
+		\item OPAL does not account for significant changes to an area's hydrology, such as may occur when a landscape is significantly altered by mining.
+		
+		\item Servicesheds in OPAL are currently limited to either hydrological servicesheds or global servicesheds (such as for carbon). If there are other services you would like to include, please let us know on the Natural Capital Project User Forum (\url{http://forums.naturalcapitalproject.org}), and we can help determine where there’s the possibility of including that service and its servicesheds.
+	
+		\item Currently, OPAL shows whether the selected offset portfolio meets the required amount of offset (total hectares per ecosystem type and biophysical amount of service), but OPAL does not test whether selected offset portfolio meets all mitigation requirements (e.g., LCI, minimum patch size, threat level and richness). The tool only screens out patches below the minimum threshold for all patches. In cases where multiple patches are impacted, potential offset patches provided in the results may be acceptable offsets for only some of the impacted patches. When a project impacts multiple ecosystem patches, it is important to independently check that the final offset portfolio meets requirements for each impacted patch.
+		
+		\item The same limitations of the InVEST carbon, sediment and nutrient models apply to their use in OPAL. Please see the InVEST User's Guide for the details of these limitations: \url{http://www.naturalcapitalproject.org/download.html}
+	\end{itemize}
+
+\chapter{Tips and troubleshooting}
+	
+	\begin{itemize}
+		\item The tool requires that all data and inputs to be in the same projection. 
+		
+		\item OPAL is best suited to evaluating development footprints and offset patches that are large relative the pixel size of raster inputs (dozens of pixels at least). In tests in Colombia, the static map estimates deviated most from the InVEST scenario-based estimates of impacts for smaller impact sites. We plan to refine these estimates of the appropriate scale for using OPAL as it is applied in more locations.
+		
+		\item Please post any requests for help troubleshooting or other questions about the tool to the Natural Capital Project User Forum (\url{http://forums.naturalcapitalproject.org}), where NatCap scientists and tool developers can provide an answer.
+	\end{itemize}
+
+\end{document}

@@ -1,0 +1,405 @@
+% %& -job-name="OPAL User's Guide"
+
+\documentclass[11pt,letterpaper]{report}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[margin=1in]{geometry} %change document margins
+\usepackage{enumitem} %get lettered lists
+\usepackage[T1]{fontenc}
+\usepackage{titlesec, blindtext, color} %for fancy chapter numbering
+\usepackage{changepage}%for indenting whole paragraphs
+\titleclass{\chapter}{straight} %no page break between chapters
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\huge\bfseries}
+\titlespacing{\chapter} {0pt}{40pt}{20pt}
+\titlespacing{\subsection} {0.25in} {10pt}{5pt}
+\setlength{\parskip}{10pt} %set spacing between paragraphs
+
+\newenvironment{myenumerate}{%to have indents in sub paragraphs in list, use numbers for sublevels
+	\edef\backupindent{\the\parindent}
+	\enumerate
+	\setlength{\parindent}{\backupindent}
+		\setlist[enumerate,1]{label=(\arabic*)}
+		\setlist[enumerate,2]{label=(\arabic*)}
+}{\endenumerate}
+
+
+\graphicspath{ {images/} }
+
+\title{OPAL: Offset Portfolio Analyzer and Locator}
+\author{Lisa Mandle}
+
+\begin{document}
+
+\input{title_page_sp}
+
+\newpage
+	\pagenumbering{roman}
+	\tableofcontents
+
+\newpage
+	\pagenumbering{arabic}
+\chapter{Resumen}
+       
+   OPAL (Offset Portfolio Analyzer and Locator) es una herramienta de software independiente y de código libre que se ejecuta en sistemas operativos Windows recientes (Windows Vista y posteriores). OPAL permite que quien lo usa estime los impactos de las actividades de desarrollo, como las minas o las carreteras, sobre los ecosistemas terrestres y varios de los servicios que estos  prestan, y luego seleccionar las compensaciones para mitigar eficazmente las pérdidas. OPAL analiza cómo las personas se ven afectadas por los impactos ambientales de las actividades de desarrollo y mitigación, haciendo que las consecuencias del desarrollo sean más transparentes y permitan que se diseñen carteras de mitigación para poder mantener o restaurar los beneficios ambientales de una manera socialmente equitativa.
+       	
+	OPAL ha sido diseñado para ser utilizado en diversos contextos en todo el mundo. Es una versión generalizada y flexible de MAFE-T, que fue desarrollado para apoyar en la selección de carteras de compensación en Colombia sobre la base de su política y manual nacional sobre compensaciones. Esta Guía de Uso proporciona información sobre el montaje de los datos requeridos, la creación de insumos, cómo correr OPAL y cómo interpretar los resultados de la herramienta. Si hay preguntas adicionales acerca de la herramienta, se puede consultar el foro de usuarios del Proyecto Capital Natural (\ url {http://forums.naturalcapitalproject.org}), donde el personal científico y de desarrollo de herramientas de NatCap puede proporcionar una respuesta.
+
+\chapter{Flujo de trabajo de OPAL}
+	Para utilizar OPAL en un nuevo lugar, el usuario primero deberá crear los mapas de cambio de servicios ambientales que se utilizan para la estimación de los impactos del proyecto y el valor de compensación de las diferentes opciones de mitigación. OPAL viene con herramientas de ayuda para la generación de estos mapas basados en modelos InVEST de carbono, nutrientes  y/o sedimentos, o con los resultados de otros modelos de servicios ecosistémicos. La creación de estos mapas implica los siguientes pasos (ver \ hyperref [ch:maps] {la sección ``Generación de mapas de cambio de servicio de los ecosistemas ''} , que tiene más detalles):
+	
+	\begin{center}
+		{\sffamily Ensamblar los datos de entrada $\Rightarrow$ Crear los mapas de cambio de servicios de ecosistemas $\Rightarrow$ Evaluar la calidad de mapas estáticos}
+	\end{center}
+	
+	Tras haber creado los mapas de cambio de servicios ambientales para los servicios deseados para una región en particular, estos pueden ser utilizados para correr OPAL repetidamente dentro de esa zona, y así evaluar varios proyectos sin necesidad de crear nuevos mapas cada vez. Una vez creados los mapas deseados, correr OPAL implica sólo los pasos siguientes (véase el \ hyperref [ch: runningOPAL] {``Sección Cómo hacer que OPAL corra ''}, que tiene más detalles):
+	
+	\begin{center}
+		{\sffamily Compilar los datos de entrada y los mapas estáticos $\Rightarrow$ Ejecutar OPAL $\Rightarrow$ Seleccionar la cartera de compensación y explorar el balance neto}
+	\end{center}
+
+
+\chapter{Descargar e instalar OPAL}
+
+	\begin{enumerate} 
+		\item Descargue OPAL del sitio web de Natural Capital Project (\url{http://www.naturalcapitalproject.org/opal_download.html}). 
+		
+		\item Haga doble clic en el archivo descargado para instalar OPAL. Note que OPAL requiere \~{}160 MB de espacio en disco.
+		
+		\item Seleccione el idioma de instalación y haga clic en ``Siguiente'' para avanzar.
+		
+		\item Haga clic en ``De acuerdo'' para aceptar el acuerdo de licencia.
+		
+		\item Haga clic en ``Instalar'' para que inicie la instalación.
+	 \end{enumerate}
+
+\chapter{Generación de mapas de cambio de servicios ecosistémicos}
+\label{ch:maps}
+
+	Para evaluar rápidamente los efectos de las actividades de desarrollo y los beneficios de las diferentes opciones de mitigación, OPAL se basa en un conjunto de mapas estáticos precalculados en lugar de los modelos InVEST que se ejecutan directamente cada vez que se utiliza la herramienta. Estos mapas estáticos se basan en los modelos de sedimentos, nutrientes y carbono InVEST, o en otros modelos de servicios ambientales de elección del usuario. Una vez que los mapas estáticos se han creado para un área en particular, OPAL se puede ejecutar varias veces para evaluar los impactos y seleccionar los sitios de compensación sin necesidad de tener que generar mapas estáticos cada vez.
+	
+       Para generar mapas estáticos utilizando los modelos de sedimentos, nutrientes y carbono InVEST, cada modelo InVEST se ejecuta para el área de análisis en condiciones de paisaje actuales y bajo tres escenarios de uso/cobertura del suelo simulados. Estos escenarios incluyen la conversión completa a suelo desnudo y la conversión a suelo pavimentado (o cualquier código de uso de la tierra proporcionado para esos campos). Estos dos escenarios son generados automáticamente por la herramienta de generación de mapas estáticos.
+	
+       El tercer escenario depende del método de compensación deseado (protección o restauración) y el usuario debe proporcionar un mapa de uso/cobertura del suelo asociado. Para estimar el valor de la protección, el usuario debe proporcionar un paisaje simulado que representa la pérdida total de la vegetación natural. Para estimar el valor de la restauración, el usuario debe proporcionar un paisaje simulado que represente la restauración total de la vegetación natural. En ambos casos, el paisaje simulado se comparará con las condiciones del paisaje actuales.	
+        
+       Las salidas de los modelos InVEST se utilizan para producir un conjunto de mapas que indican los impactos en cada servicio ecosistémico de la conversión de áreas a terreno pavimentado o desnudo, y de la protección de las áreas para evitar la pérdida de la vegetación natural o la restauración de la vegetación natural (dependiendo del método de compensación seleccionado). Al superponer la huella de un área que está siendo considerada para el desarrollo o como una compensación en estos mapas, se puede calcular rápidamente una buena estimación del cambio en el servicio, evitando la necesidad de una serie repetida y potencialmente larga de corridas de modelos InVEST.	
+       Además de crear mapas estáticos a partir de los modelos de sedimentos, nutrientes y carbono InVEST, el usuario tiene la opción de generar su propio conjunto de mapas estáticos para otro servicio o usar otros modelos, e incluir este servicio en los análisis OPAL.
+	Una vez más, una vez que los mapas estáticos han sido generados para un área particular, pueden ser utilizados para corridas repetidas de OPAL sin necesidad de regenerarlos en cada ocasión.
+
+	\subsection*{Necesidades de los modelos y los datos de servicios ecosistémicos:}
+
+	OPAL incluye tres herramientas de generación de mapas que crean los mapas de cambio en los servicios ambientales basados en los modelos de nutrientes, sedimentos y carbono InVEST. El funcionamiento de estas herramientas requiere los mismos insumos como los modelos InVEST. Consulte la Guía del usuario InVEST para obtener información detallada sobre los requisitos de datos y formato: \url{http://www.naturalcapitalproject.org/download.html}. 
+	
+	\subsection*{Generación de mapas estáticos para estimar impactos y valores de compensación para los servicios de carbono, sedimento y nutrientes:}
+	
+	Las herramientas de generación de mapas de cambio en servicios ecosistémicos se descargan junto con OPAL y pueden ejecutarse desde el Menú de Inicio buscando “generador de mapas estáticos”.
+ 
+	Los generadores de mapas estáticos para sedimento, nutrientes y carbono se implementan en tres pasos:
+	
+       En primer lugar, las herramientas ejecutan el modelo InVEST de nutrientes, sedimentos o carbono a través del paisaje actual y tres escenarios simulados. Como se describió anteriormente, la herramienta genera automáticamente los escenarios desnudo y pavimentado (u otro tipo de impacto preferido) utilizando el código LULC adecuado proporcionado por el usuario. Para el escenario de pérdida total de vegetación natural, necesario crear un mapa estático para la protección, el usuario debe proporcionar el mapa ráster LULC que representa los tipos LULC esperados si se eliminara toda la vegetación natural. Este escenario de pérdida de vegetación natural puede incluir varios tipos LULC que representen, por ejemplo, la conversión de las plantaciones, pastizales, tierras de cultivo o desarrollo urbano en diferentes lugares. Para el escenario de restauración de la vegetación natural, necesario para crear un mapa estático para la restauración, el usuario debe proporcionar el mapa ráster LULC que represente los tipos LULC esperados si la vegetación fuera restaurada a un tipo de ecosistema natural. Todos los tipos LULC especificados en los escenarios simulados también deben aparecer con parámetros asociados en la tabla biofísica.
+	
+       En segundo lugar, los resultados pertinentes del modelo InVEST se utilizan para crear conjuntos de mapas estáticos para la estimación de los impactos del desarrollo (ya sea la conversión a suelo desnudo o a suelo pavimentado) y para la estimación de los beneficios de las compensaciones (ya sea a través de la pérdida de la vegetación natural evitada por la protección o a través de la restauración). Los detalles técnicos y las ecuaciones utilizadas en los modelos InVEST para generar estas salidas se pueden encontrar en la Guía de Uso de InVEST: \ url {http://www.naturalcapitalproject.org/download.html}. En resumen, para el secuestro de carbono, el generador de mapa estático calcula la diferencia en el almacenamiento de carbono a nivel de píxeles. Para los sedimentos y la retención de nutrientes, los generadores de mapas estáticos calculan las diferencias a nivel de píxeles en los sedimentos o la exportación de nutrientes, y ajustadas a la cantidad de la exportación probable que llegue en realidad a la corriente con base en la tasa de entrega de sedimentos o nutrientes.
+	
+	En tercer lugar y por último, las herramientas de generación de mapas estáticos opcionalmente pueden ejecutar simulaciones para comparar las estimaciones basadas en mapas estáticos de los cambios en la prestación de servicios respecto a las estimaciones obtenidas directamente del modelo InVEST. Para cada ejecución de la simulación, la herramienta genera un polígono de lugar del impacto al azar. El lugar del impacto aleatorio se utiliza para generar un escenario LULC para InVEST en la cual sólo el lugar del impacto se convierte ya sea en suelo desnudo o pavimentado, o en el tipo LULC alternativo en el escenario simulado proporcionado. La herramienta ejecuta InVEST para los escenarios actuales y los lugares aleatorios de impacto, y calcula el cambio en la prestación de servicios, así como la estimación basada en mapas estáticos generados en el segundo paso. Los resultados de estas simulaciones se proporcionan como una salida, la que permite al usuario evaluar la calidad de las estimaciones de los mapa estáticos en comparación con los cambios esperados en la prestación de servicios modelados directamente con InVEST. Tenga en cuenta que mientras más simulaciones se soliciten para  las cuencas hidrográficas, mayor será el tiempo de cálculo y el espacio en disco necesarios para completar las simulaciones.
+		
+	Si se dispone de datos para la calibración en las áreas de interés, los modelos pueden ser calibrados en InVEST y entonces los parámetros calibrados pueden ser utilizados en las herramientas para generar nuevos mapas estáticos. Si se necesitan estimaciones más precisas de lo que los mapas estáticos proporcionan, OPAL también puede servir como una proyección de primer paso de las parcelas de compensación más prometedoras. La cartera de compensación se puede volver a ejecutar en InVEST o con otros modelos de servicios ecosistémicos para proporcionar una estimación mejorada de los cambios esperados con diferentes carteras de compensación.	
+	\subsection*{Generación de mapas de cambios de servicio ecosistémico personalizados:}
+	
+       Si bien los mapas estáticos personalizados pueden ser creados de forma independiente e ingresados directamente en la herramienta principal OPAL, también se incluye una herramienta de generación de mapas estáticos de ecosistemas personalizados. Ambos enfoques se pueden utilizar para crear mapas estáticos para servicios más allá de carbono, sedimentos o nitrógeno, o utilizar modelos distintos de InVEST para estimar los impactos sobre servicios de carbono, sedimentos o nitrógeno. En cualquiera de los casos, los valores negativos de los mapas estáticos deben indicar una pérdida en el servicio y los valores positivos deben indicar una ganancia en el servicio.	
+	La herramienta de generación de mapas estáticos requiere como entradas mapas de la prestación de servicios a nivel de píxeles en los mismos cuatro escenarios que se utilizan para generar los mapas estáticos estándar de carbono, sedimentos y nitrógeno: las condiciones LULC actuales (base), la conversión completa del paisaje a suelo desnudo, conversión completa del paisaje a suelo pavimentado, y la pérdida total de la vegetación natural. La herramienta calcula la diferencia entre el nivel actual (base) de la prestación de servicios y los otros tres escenarios para generar los tres mapas estáticos necesarios para la estimación de los impactos del desarrollo y compensar los beneficios en OPAL. Los mapas estáticos se guardan en una carpeta del espacio de trabajo especificado por el usuario, desde donde pueden entonces ser proporcionados como una entrada de servicio del ecosistema personalizada para OPAL.
+	
+	\subsection*{Una nota sobre la adicionalidad:}
+	
+	Los valores de los mapas estáticos para la protección y restauración producidos por el generador de mapas estáticos se basan en la suposición de que las actividades de protección y restauración proporcionan beneficios adicionales que no existen en la ausencia de mitigación y son totalmente eficaces en el logro de esos beneficios. En el caso de la protección, esto supone que las áreas de mitigación de otro modo serían completamente convertidas a vegetación no natural. En realidad, esta probabilidad de conversión puede ser menor que 100 por ciento. En el caso de la restauración, esto supone que la restauración restaura completamente la vegetación a su estado natural. En la práctica, no es probable que haya retardos e incluso alguna probabilidad de fallo en la restauración. Para compensar verdaderamente las pérdidas de servicios ambientales, la cantidad de mitigación requerida debe tener en cuenta estos factores. 
+	
+       Una manera de manejar esto es asignar una tasa de mitigación (el número de unidades de compensación requeridas para una unidad de pérdida de servicio) que es mayor que 1. En OPAL, las tasas de mitigación se pueden especificar tanto para la biodiversidad (en términos de número de hectáreas) como para cada servicio de los ecosistemas en la interfaz principal OPAL y en las entradas asociadas. Si es probable que haya variación espacial en la adicionalidad de las actividades de mitigación para la prestación de servicios ecosistémicos, esto puede tenerse en cuenta en los mapas espaciales mediante el ajuste de los valores de mapa estático a nivel de píxel. Por ejemplo, en el caso de la protección, algunas áreas pueden estar en mayor riesgo de deforestación, ya que están cerca de las carreteras o son apropiadas para la agricultura. La adicionalidad, o beneficio adicional, de proteger estas zonas de alto riesgo es mayor que los beneficios de la protección de zonas de bajo riesgo. Esto puede reflejarse multiplicando el mapa estático de protección por la probabilidad de deforestación.
+	
+
+\chapter{Ejecución de OPAL}
+\label{ch:runningOPAL}
+
+	\begin{myenumerate}
+		\item Corra OPAL desde el menú de inicio.
+		
+		\item Seleccione el \textbf{espacio de trabajo (requerido)} donde se guardarán los archivos de salida.
+		
+		\item Input \textbf{huella del proyecto (requerido)}.\
+
+			La huella del proyecto debe ser un shapefile poligonal del área de desarrollo con un campo entero llamado ``FID ''; si el shapefile contiene múltiples características, el análisis considerará los impactos de todos los polígonos.				
+		\item Select \textbf{tipo de impacto (requerido)}.\
+		
+			Las opciones por defecto son ya sea ``Vía/Pavimentado'' para el desarrollo que resulta en superficies pavimentadas o ``Mina/Desnudo'' para el desarrollo que resulta en suelo expuesto.
+			
+			En la práctica, estas dos categorías pueden ser usadas para representar otros tipos de uso y cobertura de suelo de interés (por ejemplo, conversión a cultivos o pastos) si los mapas estáticos creados usan otros códigos LULC en vez de pavimentado o desnudo (ver \hyperref[ch:maps]{sección ``Generación de mapas de cambio de servicios de ecosistemas''} para obtener más información). Pero solamente una imagen de impacto puede ser especificada cada vez, de modo que no es posible estimar los impactos que resultan de la conversión de tipos múltiples de uso o cobertura de suelo en una sola corrida de OPAL.
+		
+		\item Input \textbf{mapa de los ecosistemas naturales (requerido)}.
+		
+			Un shapefile poligonal de los ecosistemas naturales. La cantidad y tipo de compensación de biodiversidad necesitada será calculada con base en el solapamiento entre los ecosistemas naturales y la huella del proyecto. 
+		
+			\begin{adjustwidth}{0.25in}{}
+				
+				{\em Format}: Cada fila debe ser un polígono o un multipolígono de un tipo particular de ecosistema. Cada columna contiene información sobre los ecosistemas, y dos columnas deben nombrarse como sigue:
+			
+			\end{adjustwidth}
+				
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item {\em ecosystem}: valor de cadena con el nombre del tipo de ecosistema \
+				
+				\item {\em mit\_{}ratio}: el factor numérico del factor de compensación/tasa de mitigación para ese ecosistema
+			
+			\end{enumerate}
+			
+		
+		\item Select \textbf{tipo de compensación (requerido)}.
+		
+			Las opciones son ya sea ``protección'' o` `restauración'.' Si se escoge protección, el valor de mitigación de las parcelas de compensación será calculado como la pérdida evitada de vegetación. Si se escoge restauración, el valor de mitigación será calculado como el beneficio de restaurar la vegetación. Debe proveerse entonces el grupo apropiado de potenciales sitios de compensación y los mapas estáticos para calzar con el tipo de compensación deseado.
+			
+		\item Input \textbf{sitios potenciales de compensación (requerido)}.
+		
+			Un shapefile poligonal de los sitios de compensación potenciales para que OPAL seleccione. Si se escoge protección como el tipo de compensación a ser usado, este debería ser el mapa de los ecosistemas naturales remanentes y puede ser el mismo archivo que el mapa de ecosistemas naturales señalado antes. Si se escoge restauración como el tipo de compensación a ser usado, este debe ser el mapa de áreas que no están actualmente incluidas en el mapa de ecosistemas naturales y que tienen potencial de ser restaurados al ecosistema natural (por ejemplo, bosque, humedal). 
+			
+			\begin{adjustwidth}{0.25in}{}	
+				{\em Format}: Cada fila debe ser un polígono o un multipolígono de un tipo particular de ecosistema. Se requiere una columna, y las columnas adicionales serán ignoradas. La columna requerida debe llamarse como sigue:
+			\end{adjustwidth}
+			
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item	{\em ecosystem}: valor de cadena con el nombre del tipo actual de ecosistema si el tipo de compensación escogido es protección, o el tipo de ecosistema que va a ser restaurado si el tipo de compensación escogido es restauración. Para calzar pérdidas y compensaciones en el mismo ecosistema, los mapas de sitios de compensación potenciales deben usar el mismo grupo de nombres de ecosistemas que el mapa de ecosistemas naturales.
+			\end{enumerate}
+						
+			
+		
+		\item Input \textbf{cuencas de servicio (requerido)}.
+		
+			Un shapefile poligonal de la cuenca de servicios para servicios hidrológicos, que son las cuencas aguas arriba de los puntos de toma de agua potable. Los impactos para los servicios hidrológicos serán sumados por cuenca de servicios.
+
+			\begin{adjustwidth}{0.25in}{}					
+				{\em Format}: Cada fila debe ser un polígono o multipolígono de la cuenca de servicio para un centro poblado en particular. Cada columna contiene información sobre la cuenca de servicio, y dos columnas se deben nombrar como sigue:
+			\end{adjustwidth}
+				
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item {\em	pop\_{}center}: valor de cadena con el nombre del centro poblado o grupo beneficiario vinculado a la Cuenca de servicio 
+				
+				\item {\em pop\_{}size}: el número de gente dentro del centro poblado o grupo beneficiario	
+			\end{enumerate}
+		
+		\item Input \textbf{zonas de búsqueda (límite duro, requerido)} y \textbf{subzonas (límite suave 1, opcional)}.
+		
+			Un shapefile poligonal de zonas de búsqueda, potencialmente con subzonas prioritarias anidadas. Las zonas de búsqueda sirven como límites duros, por lo que los parches compensados potenciales devueltos por OPAL están restringidos solo a aquellos que se producen en la misma zona que la huella del proyecto. Las subzonas sirven como límites suaves, de modo que el informe de los resultados indica cuáles parches de compensación e encuentran dentro de la misma subzona que la huella del proyecto para que puedan ser priorizados, si se desea.
+
+			\begin{adjustwidth}{0.25in}{}				
+				{\em Format}: cada fila debe ser una subzona priorizada con la zona asociada. Si no se desean subzonas, solo se debe proveer un polígono por zona. Para buscar en toda el área de estudio los sitios de compensación, sin restringir las zonas, este shapefile debe contener solamente un solo polígono que cubra toda la extensión de los datos. La columna contiene el nombre de la zona a la cual pertenece dada subzona priorizada, y debe formatearse de la siguiente manera:
+			\end{adjustwidth}
+			
+			\begin{enumerate}[leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+				\item	{\em zone}: valor de cadena con el nombre de la zona a la que pertenece la subzona priorizada. 
+			\end{enumerate}	
+				
+		\item Input \textbf{límites suaves 2 y 3  (ambos opcionales)}.
+		
+			Estos son shapefiles poligonales que permiten un nivel adicional de priorización de las parcelas de compensación, si se desea. OPAL analiza qué posibles parcelas de compensación se ubican dentro de los mismos polígonos de contorno suave que la huella del proyecto para que puedan ser priorizadas para la selección de la cartera de compensación, si se desea. Por ejemplo, un conjunto de límites blandos podría representar las cuencas hidrográficas y el otro representar las divisiones administrativas con el fin de priorizar las compensaciones dentro de la misma cuenca y unidad administrativa, cuando sea posible.
+		
+		\item Input \textbf{mapa de amenazas (opcional)}.
+		
+			Un archivo ráster cuyos valores deben indicar el nivel de amenaza por influencias antropogénicas en un punto en particular. Una amenaza es considerada un indicador de la calidad del parche para biodiversidad. Si se incluye, los parches de compensación se restringirán a aquellos con una valor de amenaza promedio menor o igual a la de los parches de ecosistemas que intersectan el sitio de estudio (la huella del proyecto). Esto asegura que los parches de compensación sean de igual o mejor calidad que los parches impactados. 
+		
+		\item  Input \textbf{mapa de riqueza de especies (opcional)}.
+		
+			Un archivo ráster cuyos valores deben indicar el nivel de riqueza de especies en un punto en particular. La riqueza de especies es considerada un indicador de la calidad del parche para biodiversidad. Si se incluye, los parches de compensación se restringirán a aquellos con una valor de riqueza de especies  promedio menor o igual a la de los parches de ecosistemas que intersectan el sitio de estudio (la huella del proyecto). Esto asegura que los parches de compensación contengan igual o más riqueza de especies que los parches impactados.
+				
+		\item Input \textbf{áreas de evitación (opcional)}.
+		
+			Un shapefile poligonal que indica las áreas designadas donde los impactos del desarrollo deben evitarse. Por ejemplo, esto puede incluir áreas protegidas, sitios de humedales RAMSAR u otras áreas donde los impactos del desarrollo sean desalentados o prohibidos legalmente. Si la huella del proyecto se cruza con un área de evitación, la herramienta emite una advertencia 
+				
+		\item Input \textbf{cartera de conservación (opcional)}.
+		
+			Un shapefile poligonal que indica las áreas prioritarias para localizar compensaciones. Este mapa puede basarse en ejercicios de conservación a escala de paisaje, políticas u otra fuente de priorización. Si se incluye, los resultados indicarán qué parche potencial de compensación cae dentro de la cartera de conservación de modo que sean preferencialmente seleccionados para la cartera de compensación
+		
+		\item Input \textbf{impactos previamente concedidos (opcional)}.
+	
+			Un shapefile poligonal de huellas de impacto de proyectos en sitios que han sido concedidos pero que todavía no están representados como terreno desarrollado en los mapas de uso/cobertura del suelo. Si se incluyen, las porciones de las parcelas de compensación potenciales que se crucen con impactos previamente concedidos serán removidas de modo que no puedan ser elegidas y contadas para las compensaciones.
+				
+		\item Input \textbf{previously selected offsets (optional)}.
+		
+			Un shapefile poligonal de aquellas áreas que no pueden ser seleccionadas como compensaciones porque ya han sido previamente designadas como compensaciones en otros proyectos. Las parcelas de compensación potenciales dentro de este shapefile serán excluidas de los sitios de compensación potenciales en los resultados. Otros sitios que no están en riesgo de degradación y por tanto cuya protección no proveerá de beneficios extras más allá de las condiciones de línea base (por ejemplo, áreas protegidas) o áreas que no son factibles como compensaciones por otras razones políticas, sociales, económicas u otras también pueden ser incluidas aquí.
+		
+		\item Choose \textbf{servicios ecosistémicos} para incluir en el cálculo de los impactos en la selección de compensaciones.
+		
+			Marque las casillas de los servicios ecosistémicos que desee (carbono, nutrientes, sedimentos y/o personalizados) que serán incluidos. Para cada servicio que se selecciona se debe proporcionar lo siguiente:
+			
+			\begin{enumerate}[label=\alph*.]
+				
+				\item Input a \textbf{tasa de mitigación}: La tasa de mitigación es el valor numérico que indica el número de unidades de compensaciones necesarias para compensar una unidad por la pérdida de servicios ecosistémicos. La tasa de mitigación puede usarse para dar cuenta de la adicionalidad de las compensaciones (ver la última sección de \ hyperref [ch:maps] {`` Generación de mapas de cambio de servicios ecosistémicos ''} para obtener más información) y también para ajustar los sesgos en las estimaciones de impacto y compensación de los mapas estáticos. Por ejemplo, si las simulaciones desde el generador de mapas estáticos indican que las estimaciones de los mapas estáticos para los beneficios de restauración en comparación con los impactos son más bajas que las estimaciones de InVEST, puede ser deseable especificar una tasa de mitigación mayor a 1.
+				
+				\item Seleccione una carpeta que contenga los \textbf{mapas de cambios de servicios ecosistémicos} para el servicio deseado. Los mapas estáticos son conjuntos de mapas ráster que utiliza la herramienta para estimar los impactos del desarrollo o los beneficios de la protección. Estos mapas pueden ser creados usando los generadores de mapas estáticos de OPAL (ver \ hyperref [ch: mapas] {``Generación de mapas de cambio de servicios ecosistémicos''} para obtener información sobre la creación de estos mapas). Para los servicios de los ecosistemas personalizados, el tipo de campo de servicio personalizado también debe ser elegido. Esto indica qué tipo de cuenca de servicio debe aplicarse cuando se haga el seguimiento de los impactos: o bien el cambio total en el servicio (opción “global”, que rige para el almacenamiento de carbono) o el cambio en el servicio por cuenca aguas arriba (opción “hidrológica”, que rige para la retención de sedimentos y nutrientes para la calidad del agua potable).\\
+				
+				\begin{adjustwidth}{0.25in}{}
+					{\em Format}: Para cada servicio seleccionado, una carpeta que contenga los siguientes rásters:
+				\end{adjustwidth}
+				
+				\begin{enumerate}[label=(\arabic*),leftmargin=0.5in,labelindent=!,itemindent=-0.02in]
+					\item {\em ecosystemservicename\_{}bare\_{}static\_{}map.tif} (e.g., {\em sediment\_{}bare\_{}static\_{}map} or {\em custom\_{}bare\_{}static\_{}map}): Un ráster que indica el impacto sobre un servicio dado para cada píxel de conversión a suelo desnudo. Los valores negativos indican una pérdida en la provisión de servicio.
+					
+					\item {\em ecosystemservicename\_{}paved\_{}static\_{}map.tif}: Un ráster que indica el impacto sobre un servicio dado para cada píxel de conversión a suelo pavimentado. Los valores negativos indican una pérdida en la provisión de servicio.			
+					\item {\em ecosystemservicename\_{}protect\_{}static\_{}map.tif} or
+					
+1111					 {\em ecosystemservicename\_{}restore\_{}static\_{}map.tif}: Un ráster que indica el impacto sobre un servicio dado para cada píxel de pérdida evitada de vegetación natural. Los valores negativos indican una pérdida en la provisión de servicio. El mapa estático provisto debe calzar con el tipo de compensación especificado arriba.
+					
+					\item Para los servicios hidrológicos (sedimentos, nutrientes y personalizado, si se selecciona la opción ``hidrológica''), se deben proveer tres mapas. Estos mapas deben ser nombrados {\em ecosystemservicename\_{}bare\_{}pts.tif}, {\em ecosystemservicename\_{}paved\_{}pts.tif} and {\em ecosystemservicename\_{}protect\_{}pts.tif} or 
+					
+					{\em ecosystemservicename\_{}restore\_{}pts.tif}. Estos mapas se usan para ajustar las estimaciones de los mapas estáticos con base en cuán conectado el sitio de impacto o compensación esté con la red de corrientes (pts significa ``porcentaje de corriente'', que es un resultado provisto por el modelo InVEST de sedimentos y nutrientes). Este requerimiento podría ser eliminado en versiones futuras de OPAL, esperando mejoras en los modelos InVEST de sedimentos y nutrientes.
+					
+				\end{enumerate}
+				
+			\end{enumerate}	
+		
+		\item Escoja el \textbf{esquema de compensaciones}.
+		
+			Las opciones de esquemas de compensación incluyen: SE y biodiversidad, prioridad SE o prioridad biodiversidad. Si se elige ``SE y biodiversidad '', OPAL devolverá parcelas potenciales de compensación que contribuyan a satisfacer cualquier meta de servicio ecosistémico o de biodiversidad. Si se elige 'prioridad SE'', OPAL devolverá solo las parcelas potenciales de compensación que cumplan con los objetivos del servicio ecosistémico, y las compensaciones de biodiversidad serán seleccionadas dentro de ese conjunto. Si se elige “prioridad biodiversidad'', OPAL devolverá solo las parcelas potenciales de compensación que cumplan con las metas de biodiversidad (es decir, con el mismo tipo de vegetación que la vegetación afectada, y cumple con criterios mínimos de amenazas y riqueza de especies, si se incluyen), y las compensaciones para los servicios ecosistémicos deben ser seleccionadas dentro de ese conjunto.
+		
+		\item Escoja si se debe \textbf{restringir parcelas de compensación por LCI}.
+		
+			LCI (siglas en inglés para Índice de Contexto de Paisaje) es un indicador de calidad de hábitat. (Ver \hyperref[ch:glossary]{la sección ``Glosario/términos clave''} con su definición). Si se decide escoger la restricción de las parcelas de compensación por LCI, OPAL solamente devolverá los sitios de compensación que tengan una puntuación LCI mayor o igual a la puntuación LCI de los parches de vegetación impactados. Note que el cálculo de las puntuaciones LCI puede tomar bastante tiempo, de modo que esto podría hacer que la corrida de OPAL se demore sustancialmente.
+		
+		\item Choose the \textbf{proporción de necesidades de compensación a sugerir}.
+		
+			OPAL ofrece una lista sugerida de parcelas de compensación que puedan satisfacer las necesidades de mitigación. Esto puede proporcionar un punto de partida útil para la selección de una cartera de compensación. Este número determina qué proporción de las necesidades de compensación está incluida en la lista propuesta. Los números mayores a 1 darán lugar a la sugerencia de una cartera de compensación superior a las necesidades de mitigación (cuando sea posible), de la que las parcelas de compensación indeseables se pueden quitar. Los números entre 0 y 1 darán lugar a la sugerencia de una cartera de compensación que no satisface plenamente las necesidades de mitigación, a la que se pueden añadir parcelas adicionales.
+			
+		\item Clic \textbf{``Ejecutar''}.		
+		
+	\end{myenumerate}
+
+\chapter{Interpretación de los resultados y selección de una cartera de compensación}
+
+	Tras una ejecución exitosa de OPAL, los resultados se pueden encontrar en el espacio de trabajo seleccionado, en una carpeta llamada según la zona de trabajo que contenga el sitio impactado (results\_{}zonename). Para sitios impactados que cubren múltiples zonas de búsqueda, aparecerá una carpeta separada para cada zona  
+	
+	Localizado dentro de cada carpeta de resultados está un informe interactivo (zonename\_{}report.html) donde se pueden explorar los resultados. El informe está organizado en tres secciones: 1. Los impactos estimados sobre los ecosistemas y los servicios ecosistémicos; 2. Una tabla interactiva de los parches de compensación potenciales y su valor de mitigación, de la cual se puede seleccionar una cartera de compensación; y 3. Los beneficios netos estimados para los ecosistemas y los servicios ecosistémicos con base en los impactos combinados y las compensaciones seleccionadas del proyecto. Note que, a menos que se hayan validado y calibrado los mapas estáticos, los valores de impacto en el servicio ecosistémico y la compensación deben ser tratados como índices carentes de unidades.
+	
+	El informe contiene la siguiente información para analizar los impactos, evaluar los potenciales parches de compensación y seleccionar una cartera de compensación:
+	
+	\begin{myenumerate}		
+	
+		{\bfseries \item Resumen de los impactos a los ecosistemas y los servicios ecosistémicos}
+		
+		\begin{enumerate}[label=\alph*.]
+			\item Tipo de impacto
+				
+				Indica el tipo de impacto que fue seleccionado para el análisis, ya sea ``Pavimentado/Vía'' o ``Suelo desnudo/Mina''
+				
+			\item Impactos totales a los servicios ecosistémicos
+			
+				Estimación del impacto biofísico del proyecto sobre el almacenamiento de carbono, la retención de sedimentos, la retención de nitrógeno y, si se proporcionan datos, cualquier servicio ambiental adicional. Tenga en cuenta que un valor negativo indica una pérdida de la prestación de servicios, y, por lo tanto, un impacto negativo. Estas estimaciones se basan en los mapas de cambio de servicios ambientales para impacto. (Ver \ hyperref [ch: mapa] {la sección ``Generación de mapas de cambios en los ecosistémicos''} de esta Guía del usuario para más detalles) para ver dónde las personas se ven afectadas por estos cambios, desplácese hacia abajo hasta la tabla con los ``Beneficios de los servicios ecosistémicos'' en la tercera sección del informe de resultados interactivo (``Beneficios netos para los ecosistemas y los servicios ecosistémicos''), donde los impactos están enumerados por cuenca de servicio.
+				
+			\item Impacto total a los ecosistemas terrestres: 
+				
+				Estimación de los impactos del proyecto sobre los ecosistemas, resumidos por tipo de ecosistema.
+				
+			\item Detalles de los impactos a los ecosistemas terrestres: 
+			
+				La información sobre cada parche de ecosistemas afectado por el proyecto, incluyendo el tipo de ecosistema, la zona afectada, la calidad del parche (Índice de Contesto de Paisaje, si está seleccionado, y el nivel de riqueza y amenaza, si se incluyen las entradas opcionales), la tasa especificada de mitigación y el área total de compensación requerida (área impactada  x tasa de mitigación).
+				
+		\end{enumerate}
+		
+		
+		{\bfseries \item  Parches de compensación y potencial de mitigación}
+			
+			OPAL ofrece un conjunto de parches de ecosistemas desde los polígonos del shapefile de sitios potenciales de compensación que  podrían satisfacer las necesidades en base a los insumos y las necesidades de compensación especificadas por el usuario. OPAL devuelve aquellos parches de compensación que se encuentran dentro de la misma zona de búsqueda especificada como la huella del proyecto. También devuelve solo aquellos parches que cumplan con el tamaño mínimo de parche, Índice de Contexto de Paisaje (si se selecciona), y de los niveles de amenaza y riqueza de especies (si se proporcionan los datos de entrada opcionales), con base en los parches afectados. Cabe destacar que en los casos en que se ven afectados varios parches del mismo tipo de ecosistema, algunos parches potenciales de compensación pueden ser válidos como compensaciones para sólo una parte y no la totalidad de los impactos sobre un tipo determinado ecosistema (ver \hyperref[ch:limits]{``Limitaciones de la herramienta''} con más detalles).
+			
+			El conjunto de parches potenciales de compensación se presenta en una tabla interactiva con atributos clave (cantidad de compensación provista, tamaño del parche, distancia al sitio de impacto, etc.) asociados con cada parche.
+	
+			OPAL ofrece una lista de parcelas sugeridas que pueden ser un buen punto de partida para explorar las carteras de compensación. Estas parcelas se enumeran encima de la tabla de resultados interactivos y también están indicadas en una columna ordenable dentro de la tabla para ayudar al usuario en la adición de cualquiera o todos los paquetes sugeridos a la cartera de compensación. Las parcelas sugeridas son seleccionados en base a un algoritmo voraz que varía con el esquema de compensación elegido (``prioridad SE '', `` prioridad biodiversidad, '' o ``SE y biodiversidad''). Si se ha elegido ``SE y biodiversidad '', la lista de paquetes de compensación propuestos incluirá un conjunto de parcelas seleccionadas para compensar las pérdidas tanto de los servicios de los ecosistemas como de la biodiversidad, teniendo en cuenta la biodiversidad en primer lugar, a continuación, cualquiera de los servicios de los ecosistemas seleccionados. Si se eligió ``prioridad ES'', el algoritmo sugerirá los paquetes que se pueden utilizar para compensar las pérdidas de servicios ambientales para todos los servicios seleccionados en todas las cuencas de servicio, o lo más cerca posible dadas las parcelas de compensación disponibles. En este caso, el valor potencial de la diversidad biológica no se considera. Si se selecciona ``prioridad biodiversidad'', el algoritmo sugiere parcelas para compensar las pérdidas de biodiversidad, pero sin tener en cuenta las compensaciones de los servicios ecosistémicos. Si las carteras de compensación propuestas no son suficientes para compensar tanto la biodiversidad como los servicios ecosistémicos perdidos, se pueden agregar a la cartera parcelas fuera del sitio.
+			
+			Tenga en cuenta que el algoritmo voraz seleccionará las mayores parcelas (en el caso de la biodiversidad) o parcelas con mayor prestación de servicios ecosistémicos (en el caso de los servicios ecosistémicos) en primer lugar, incluso si estas parcelas superan la cantidad de compensación necesaria. El algoritmo no da aún en la actualidad de otros factores tales como la distancia desde el sitio de impacto del proyecto. El algoritmo de selección podrá ser refinado en futuras versiones de OPAL.
+
+			Los parches se pueden agregar o quitar de la cartera de compensación haciendo clic en la casilla en la segunda columna. Al hacer clic en un encabezado de columna se ordena la tabla de atributos de esa columna. Esto puede ser usado para identificar parches potenciales de compensación que pueden ser especialmente preferibles. Note that positive ecosystem service values indicate the potential offset parcel increases service provision and provides. Para ver la contribución total que el conjunto seleccionado de parcelas hace a la compensación de los impactos sobre los ecosistemas y los servicios ambientales, desplácese hacia abajo a la tercera sección del informe (``beneficios netos para los ecosistemas y servicios ecosistémicos '').
+			
+			Actualmente, si se desean un ordenamiento o una optimización más sofisticados, el archivo offset\_{}parcels.csv localizado en la carpeta de resultados puede abrirse en Excel o usarse en conjunto con otro programa, tal como MARZAN. Un archivo vectorial de todas las parcelas potenciales de compensación (selected\_{}offsets.shp) puede abrirse al hacer clic en la parte superior de la tabla y también se encuentra en la carpeta de resultados.
+		
+		{\bfseries \item  Beneficios netos a los ecosistemas y los servicios ecosistémicos}
+		
+			Las tablas de esta sección muestran los efectos netos del proyecto y de  las compensaciones seleccionadas. Los totales mostrados cambiarán según los parches de compensación sean seleccionados o deseleccionados para reflejar los efectos netos de una cartera de compensación dada. El color de las celdas en la columna de beneficios netos/servicios netos cambia de color para indicar ya sea una pérdida neta (rojo) o una ganancia neta (verde) de los servicios según las diferentes combinaciones de parches de compensación sean seleccionadas. Una cartera de compensación que mitigue los impactos sobre los ecosistemas y los servicios ecosistémicos tomados en cuenta en esta herramienta mostrará sólo las celdas verdes en los resultados.
+			
+			\begin{enumerate}[label=\alph*]
+				\item Beneficios para los ecosistemas terrestres:
+				
+					Esta tabla muestra la cantidad de compensaciones seleccionadas para cada tipo de ecosistema y si los beneficios netos son suficientes para satisfacer la zona de compensación requerida en base área impactada y la tasa de factor de compensación/ mitigación especificada.
+					
+				\item Beneficios para los servicios ecosistémicos
+				
+					La primera tabla resume los efectos netos del impacto del proyecto y las compensaciones seleccionados por cuenca de servicio para los servicios relacionados con el agua (sedimentos, nitrógeno y, si se incluye, un servicio personalizado de tipo hidrológico). Los centros poblados que no se ven afectados por el impacto ni la cartera de desplazamiento no se muestran. Las columnas de beneficios netos para los sedimentos y nitrógeno indican si las pérdidas de servicios ambientales han sido mitigadas por cada centro poblado. Los totales de las columnas en la parte inferior de la tabla para las columnas finales (``sedimentos netos * población'' y ``nitrógeno neto * población'') indican si, a través de toda la población, más personas reciben beneficios de los servicios ecosistémicos de las compensaciones que se perdieron por de desarrollo. Cuando estos totales son positivos (verde) pero algunos totales de beneficios netos por cuenca de servicio permanecen negativos (rojo), esto indica que la mitigación ha transferido los servicios ecosistémicos de algunas poblaciones hacia otras, creando ganadores y perdedores.
+					
+					La segunda tabla suma los impactos netos en términos de carbono. En este caso, ya que la cuenca de servicio del carbono es global, solamente el cambio total en almacenamiento de carbono es reportado. Si se ha incluido un servicio ecosistémico personalizado de tipo global, aparecerá aquí también.
+			\end{enumerate}
+	\end{myenumerate}
+
+	A más del informe interactivo, cada carpeta de resultados contiene los siguientes archivos:
+	
+	\begin{adjustwidth}{0.25in}{}
+			
+	\begin{itemize}
+		\item \textbf{impacted\_{}municipalities.shp} Shapefile de los municipios que intersectan la huella del proyecto.
+		
+		\item \textbf{impacted\_{}parcels.csv} Tabla de información sobre los parches de vegetación natural impactados por el proyecto.
+		
+		\item \textbf{impacted\_{}subzones.shp} Shapefile de las subzonas de área de búsqueda prioritaria que intersectan la huella del Proyecto.
+		
+		\item \textbf{impacted\_{}zone.shp} Shapefile del área de búsqueda impactada.
+		
+		\item \textbf{offset\_{}sites.shp} Shapefile de todas las parcelas de vegetación natural en el área de búsqueda, excluyendo las parcelas a ser impactadas.
+		
+		\item \textbf{offset\_{}parcels.csv} Tabla de información sobre los sitios de compensación potenciales en seleccionados\_{}offsets.shp
+		
+		\item \textbf{offset\_{}benefits\_{}to\_{}servicesheds.csv} Tabla de los beneficios detallados a las cuencas de servicios en selecciona \_{}offsets.shp
+		
+		\item \textbf{parcels\_{}in\_{}zone.shp} Shapefile de todas las parcelas de vegetación natural de las cuales se seleccionaron los sitios potenciales de compensación.
+		
+		\item \textbf{selected\_{}offsets.shp}  Shapefile de los sitios potenciales de compensación de las parcelas \_{}in\_{}zone.shp que cumplen con los requisitos de biodiversidad.
+		
+		\item \textbf{servicesheds.shp} Shapefile de todas las cuencas de servicio que intersectan la zona de búsqueda.
+		
+		\item \textbf{servicesheds\_{}with\_{}offset\_{}parcels.shp} Shapefile de todas las cuencas de servicio que intersectan las parcelas de compensación seleccionadas.
+	\end{itemize}
+	\end{adjustwidth}
+
+\chapter{Glosario/términos clave}
+\label{ch:glossary}
+
+	\begin{description}[leftmargin=!,labelindent=!,itemindent=-0.15in]
+		
+		\item[Índice de Contexto de Paisaje (LCI):] El Índice de Contexto de Paisaje representa el nivel de conectividad de un parche de ecosistema natural con otros parches. Se calcula como la fracción de ecosistema natural dentro de una franja de 500 m de amortiguamiento alrededor de un parche en particular. Tenga en cuenta que el LCI, por tanto, es sensible a la forma en que la vegetación se divide en polígonos con las entradas del mapa de ecosistemas naturales y los sitios  potenciales de compensación.
+		
+		\item[Cuenca de servicio:] En general, una Cuenca de servicio es el área que proporciona un servicio ecosistémico específico a determinados beneficiarios. Mediante el seguimiento de los impactos del desarrollo planificado y las actividades de compensación dentro de las cuencas de servicio, OPAL puede rastrear las consecuencias de los cambios en el entorno con los cambios en los beneficios que las personas reciben. Las cuencas de servicio pueden funcionar en escalas muy diferentes, dependiendo de la naturaleza del servicio. El secuestro de carbono y su contribución a la regulación del clima beneficia a todos los seres humanos en el planeta, por lo que su cuenca de servicio es global. En contraste, la cuenca de servicio para la purificación de agua potable, incluyendo los servicios de sedimentos y retención de nitrógeno incluidos en OPAL, es la cuenca aguas arriba del punto de toma de agua de un centro poblado en particular. Para obtener más información sobre el enfoque de cuencas de servicio, consulte \url{http://www.naturalcapitalproject.org/decisions/servicesheds.html}.
+		
+		\item[Mapa estático:] En OPAL, los ``mapas estáticos'' son los mapas subyacentes usados para estimar los impactos del desarrollo y los beneficios de las compensaciones sobre los servicios ecosistémicos. Permiten que OPAL estime de manera rápida los cambios en la provisión de servicios ecosistémicos sin tener que correr los modelos para cada huella de impacto o parcela de compensación consideradas.
+
+	\end{description}	
+
+
+\chapter{Limitaciones de la herramienta}
+\label{ch:limits}
+
+	OPAL pretende facilitar la selección de carteras de compensación que mitiguen los impactos a los ecosistemas y sus servicios. Sin embargo, puede que no sea capaz de abordar todas las cuestiones relacionadas con la mitigación que surjan y puede no ser aplicable en todas las situaciones. Al decidir si debe utilizar OPAL, es importante ser consciente de las limitaciones de la herramienta, incluyendo:
+	
+	\begin{itemize}
+		\item OPAL sólo representa impactos debidos a los cambios en la cobertura o uso del suelo dentro de la huella del proyecto y no tiene en cuenta los impactos indirectos, como el cambio del uso del suelo en torno a una carretera impulsado por el desarrollo de vías). Se necesitan análisis más sofisticados para estimar los efectos indirectos. Esto se puede hacer mediante la vinculación del modelamiento del cambio en el uso del suelo con otras herramientas para estimar el cambio en los servicios ecosistémicos, tales como InVEST.
+		
+		\item OPAL no da cuenta de cambios significativos en la hidrología del área, como los que ocurren cuando un paisaje es significativamente alterado por la minería.
+		
+		\item Las cuencas de servicio actualmente se limitan a ya sea cuencas hidrológicas o cuencas (como la del carbono). Si hay otros servicios ecosistémicos que desearía incluir, por favor háganoslo saber a través del Foro de Usuarios del Natural Capital Project (\url{http://forums.naturalcapitalproject.org}) y trataremos de determinar si hay la posibilidad de incluir ese servicio y sus cuencas de servicio.
+	
+		\item Actualmente, OPAL muestra si la cartera de compensación seleccionada cumple con la cantidad necesaria de compensación (hectáreas totales por tipo de ecosistema y la cantidad biofísica de servicio), pero OPAL no prueba si la cartera de compensación seleccionada cumple con todos los requisitos de mitigación (por ejemplo, LCI, tamaño mínimo de parche, nivel de la amenaza y riqueza). La herramienta sólo filtra las manchas por debajo del umbral mínimo para todos los parches. En los casos en que se ven afectados varios parches, los parches de compensación potenciales proporcionados en los resultados pueden ser compensaciones aceptables para solamente algunos de los parches afectados. Cuando un proyecto afecta múltiples parches de ecosistemas, es importante verificar de forma independiente que la cartera de compensación final cumpla con los requisitos para cada parche impactado.
+		
+		\item Las mismas limitaciones para los modelos InVEST de carbono, sedimentos y nitrógeno se aplican para el uso de OPAL. Por favor vea la Guía de Uso de InVEST con más detalles sobre estas limitaciones: \url{http://www.naturalcapitalproject.org/download.html}
+	\end{itemize}
+
+\chapter{Consejos y solución de problemas}
+	
+	\begin{itemize}
+		\item La herramienta requiere que todos los datos y entradas estén en la misma proyección. 
+		
+		\item OPAL es más adecuado para la evaluación de las huellas de desarrollo y los parches de compensación que son grandes en relación al tamaño de píxel de las entradas ráster (decenas de píxeles al menos). En las pruebas en Colombia, las estimaciones de los mapas estáticos se desviaron más de las estimaciones basadas en escenarios de impactos InVEST para los sitios de impacto más pequeños. Tenemos la intención de refinar estas estimaciones de la escala apropiada para el uso de OPAL al aplicarse en más lugares.
+		
+		\item Por favor, envíe cualquier necesidad de ayuda u otras cuestiones relacionadas con la herramienta al Foro de Usuarios del Natural Capital Project (\url{http://forums.naturalcapitalproject.org}), donde el personal científico y de desarrolladores de la herramienta podrá proveer una respuesta.
+	\end{itemize}
+
+\end{document}
