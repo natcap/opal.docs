@@ -15,11 +15,11 @@ all:
 lang_pdf:
 	# Arguments: in_suffix, out_suffix
 	python replace.py source/title_page_$(SUFFIX).tex $(VERSION);\
-	cd source && $(PDFLATEX) --jobname=$(OUTFILE) users_guide_$(SUFFIX).tex;\
+	cd source && $(PDFLATEX) --jobname=OPAL_manual_$(SUFFIX) users_guide_$(SUFFIX).tex;\
 
 en:
 	$(MAKE) lang_pdf SUFFIX=en
 
 es:
-	$(MAKE) lang_pdf SUFFIX=en
+	$(MAKE) lang_pdf SUFFIX=es
 
