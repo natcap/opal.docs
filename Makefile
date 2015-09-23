@@ -13,7 +13,9 @@ all:
 	$(MAKE) en es
 
 lang_pdf:
-	# Arguments: in_suffix, out_suffix
+	# Arguments:
+	# SUFFIX = the language suffix (ISO 639-1)
+	# VERSION = the version string to use.
 	python replace.py source/title_page_$(SUFFIX).tex $(VERSION);\
 	cd source && $(PDFLATEX) --jobname=OPAL_manual_$(SUFFIX) users_guide_$(SUFFIX).tex;\
 
